@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName(value = "negatively")
-public class Negatively {
+@TableName(value = "negative")
+public class Negative {
 
     private String text;
 }

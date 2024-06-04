@@ -22,7 +22,7 @@ import java.util.Map;
 @Service
 public class PictureDataSource implements DataSource<Picture> {
 
-    @Override
+
     public Page<Picture> doSearch(String searchText, long pageNum, long pageSize) {
         long current = (pageNum - 1) * pageSize;
         String url = String.format("https://cn.bing.com/images/search?q=%s&form=HDRSC2&first=%d", searchText, current);

@@ -22,6 +22,21 @@ public class SearchRequest extends PageRequest implements Serializable {
      */
     private String searchText;
 
+    /**
+     * 关键情感值
+     */
+    private int keyEmo;
+
+    /**
+     * 图片情感值
+     */
+    private int picEmo;
+
+    /**
+     * 普通情感值
+     */
+    private int emo;
+
 
     private static final long serialVersionUID = 1L;
 }

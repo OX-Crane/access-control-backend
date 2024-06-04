@@ -12,7 +12,11 @@ public class TaoBao implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
+    private Long id;
+
+    private String product;
+
+    private String text;
 
     private BigDecimal price;
 

@@ -12,6 +12,8 @@ import java.util.Map;
 public class DataSourceRegister {
 
     @Resource
+    private TaoBaoDataSource taoBaoDataSource;
+    @Resource
     private UserDataSource userDataSource;
 
     @Resource
@@ -19,6 +21,12 @@ public class DataSourceRegister {
 
     @Resource
     private PictureDataSource pictureDataSource;
+
+    @Resource
+    private BingDataSource bingDataSource;
+
+    @Resource
+    private BiliBiliDataSource biliBiliDataSource;
 
     public Map<String, DataSource> typeDataSourceMap;
 
@@ -28,6 +36,9 @@ public class DataSourceRegister {
             put(SearchTypeEnum.USER.getValue(), userDataSource);
             put(SearchTypeEnum.POST.getValue(), postDataSource);
             put(SearchTypeEnum.PICTURE.getValue(), pictureDataSource);
+            put(SearchTypeEnum.TAOBAO.getValue().toLowerCase(), taoBaoDataSource);
+            put(SearchTypeEnum.Bing.getValue().toLowerCase(), bingDataSource);
+            put(SearchTypeEnum.BILIBILI.getValue().toLowerCase(), biliBiliDataSource);
         }};
     }
 

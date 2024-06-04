@@ -19,7 +19,7 @@ spring:
   # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/my_db
+    url: jdbc:mysql://localhost:3306/access
     username: root
     password: root
   # Redis 配置
@@ -88,3 +88,18 @@ cos:
     secretKey: xxx
     region: xxx
     bucket: xxx
+# emo值情感范围
+emo:
+  keyEmo:
+    value: 20
+    step: 5
+  picEmo:
+    value: 20
+    step: 20
+  emo:
+    value: 30
+    step: 2
+# bilibili请求地址
+bilibili:
+  address: https://api.bilibili.com/x/web-interface/wbi/search/all/v2?__refresh__=true&_extra=&context=&page=1&page_size=42&order=&duration=&from_source=&from_spmid=333.337&platform=pc&highlight=1&single_column=0&keyword=刀&qv_id=I08EjPHKeK8FudM6nZZd0TtVe6dHIxES&ad_resource=5646&source_tag=3&web_location=1430654&w_rid=3eef9d0fde58433f2bff90f5422ab6d1&wts=1716886663
+  Cookie: buvid3=9F96113C-D10F-E69D-992E-CC533CA7F11124688infoc; b_nut=1703762824; _uuid=F8A15FB3-3779-B995-B4A9-8C9EBE5BBEF124835infoc; buvid4=BEFEB271-B51C-5C25-E9F1-25A0F4DCA38925547-023122811-9sM4r%2F884bff%2FJM%2BeuQf7w%3D%3D; rpdid=|(k|JukRlm~k0J'u~|J~Yk)kY; buvid_fp_plain=undefined; enable_web_push=DISABLE; header_theme_version=CLOSE; hit-dyn-v2=1; LIVE_BUVID=AUTO3517044579065936; CURRENT_BLACKGAP=0; FEED_LIVE_VERSION=V_HEADER_LIVE_NEW_POP; CURRENT_QUALITY=127; bp_video_offset_58803854=931702174840258692; CURRENT_FNVAL=4048; PVID=7; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTcxMzU4MzQsImlhdCI6MTcxNjg3NjU3NCwicGx0IjotMX0.OEz6LDriwc50YOa8PVi_8mOwQ8KeCesRmq3E3DeuQws; bili_ticket_expires=1717135774; home_feed_column=5; browser_resolution=1528-716; bsource=search_bing; fingerprint=68548d7a35938ef250e5bef1f9d6f9b8; b_lsid=CFC8214D_18FBE24B991; buvid_fp=68548d7a35938ef250e5bef1f9d6f9b8; sid=5n27bg1r; bp_t_offset_58803854=936497789032988674

@@ -8,14 +8,17 @@ import java.util.stream.Collectors;
 
 /**
  * 搜索类型枚举
- *
  */
 public enum SearchTypeEnum {
 
     USER("用户", "user"),
     POST("文章", "post"),
     PICTURE("图片", "picture"),
-    VIDEO("视频", "video");
+    VIDEO("视频", "video"),
+    Bing("必应", "bing"),
+    BILIBILI("bilibili", "bilibili"),
+    TAOBAO("淘宝", "taoBao");
+
 
     private final String text;
 
@@ -60,4 +63,4 @@ public enum SearchTypeEnum {
     public String getText() {
         return text;
     }
-    }
+}

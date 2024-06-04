@@ -1,2 +1,7 @@
-package com.crane.springboot.service;public interface WordService {
+package com.crane.springboot.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.crane.springboot.model.entity.Word;
+
+public interface WordService extends IService<Word> {
 }

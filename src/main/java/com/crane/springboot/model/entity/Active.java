@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName(value = "actively")
-public class Actively {
+@TableName(value = "active")
+public class Active {
 
     private String text;
 }
