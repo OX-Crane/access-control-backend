@@ -1,0 +1,20 @@
+Text:
+  id: "String"
+  title: "String"
+  content: "String"
+  tags: "String"
+  createTime: "Date"
+  updateTime: "Date"
+
+Picture:
+  title: "String"
+  murl: "String"
+
+Video:
+  title: "String"
+  author: "String"
+  typeName: "String"
+  url: "String"
+  description: "String"
+  pic: "String"
+  tags: "StringArray"

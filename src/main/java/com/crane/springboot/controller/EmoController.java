@@ -5,14 +5,11 @@ import com.crane.springboot.common.Yolo;
 import com.crane.springboot.model.dto.search.SearchRequest;
 import com.crane.springboot.model.entity.*;
 import com.crane.springboot.model.vo.SearchVo;
-import com.crane.springboot.utils.PictureDownloadUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -38,6 +35,7 @@ public class EmoController {
 
     private static ArrayList<EmoChange> emoChanges = new ArrayList<>();
 
+//    图片计数器
     private int counter;
 
 
@@ -94,6 +92,13 @@ public class EmoController {
         int keyEmo = searchRequest.getKeyEmo();
         int picEmo = searchRequest.getPicEmo();
 
+//        将返回的结果去掉停用词
+//        for (String result : results) {
+//            if (CacheUtils.stopWord.contains(result)) {
+//                result.contains(CacheUtils.stopWord);
+//            }
+//        }
+
 //        判断文字内容
         for (String result : results) {
             if (CacheUtils.neg.contains(result)) {
@@ -115,7 +120,9 @@ public class EmoController {
 //                PictureDownloadUtils.downloadPicture(pic, fileName);
 //            }
 //          判断图片内容
-        if (searchRequest.getType().equals("bilibili") || searchRequest.getType().equals("picture")) {
+//        if ((searchRequest.getType().equals("bilibili") || searchRequest.getType().equals("picture"))) {
+
+        if ((searchRequest.getType().equals("bilibili") || searchRequest.getType().equals("picture")) && textThenPic(searchRequest)) {
             if (searchRequest.getSearchText().equals("gun")) {
                 String path = "E:\\yoloTest\\gun";
                 yolo = Yolo.useYolo(path);
@@ -163,7 +170,9 @@ public boolean emoExceed(int keyEmo, int picEmo, int emo) {
  * 记录在发送返回结果前的情感
  * 若用户触发了一次keyEmo，然后触发了picEmo，则认为用户是危险的
  *
- * @return
+ * 策略：认为用户搜过危险词然后想要获得更多的信息或者购买危险品则认为是危险的，且在搜索间隔小于4的情况下
+ *
+ * @return true 为有问题
  */
 public boolean textThenPic(SearchRequest searchRequest) {
     String type = searchRequest.getType();
@@ -171,12 +180,15 @@ public boolean textThenPic(SearchRequest searchRequest) {
     if ((type.equals("picture") || type.equals("bilibili")) && (CacheUtils.word.contains(searchText) || CacheUtils.neg.contains(searchText))) {
         int taobao = emoChanges.lastIndexOf(new EmoChange("taobao", 2));
         int bing = emoChanges.lastIndexOf(new EmoChange("bing", 2));
-        int size = emoChanges.size();
-        if (size - taobao > 4 && size - bing > 4) {
-            return false;
+        int current = emoChanges.size() - 1;
+        if ((current - bing < 4 && bing >= 0)) {
+            return true;
+        }
+        if (type.equals("taobao") && current -bing < 4) {
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 /**

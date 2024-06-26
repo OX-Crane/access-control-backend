@@ -2,9 +2,11 @@ package com.crane.springboot.common;
 
 import com.crane.springboot.model.entity.Active;
 import com.crane.springboot.model.entity.Negative;
+import com.crane.springboot.model.entity.StopWord;
 import com.crane.springboot.model.entity.Word;
 import com.crane.springboot.service.ActiveService;
 import com.crane.springboot.service.NegativeService;
+import com.crane.springboot.service.StopWordService;
 import com.crane.springboot.service.WordService;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,8 @@ public class CacheUtils {
 
     public static List<String> word = new ArrayList<>();
 
+    public static List<String> stopWord = new ArrayList<>();
+
     @Resource
     private ActiveService activeService;
 
@@ -30,11 +34,15 @@ public class CacheUtils {
     @Resource
     private WordService wordService;
 
+    @Resource
+    private StopWordService stopWordService;
+
     @PostConstruct
     public void init() {
         List<Active> listAct = activeService.list();
         List<Negative> listNeg = negativeService.list();
         List<Word> listWord = wordService.list();
+        List<StopWord> stopWordList = stopWordService.list();
         for (Active a : listAct) {
             act.add(a.getText());
         }
@@ -44,6 +52,10 @@ public class CacheUtils {
         for (Word w : listWord) {
             word.add(w.getText());
         }
+        for (StopWord s : stopWordList) {
+            stopWord.add(s.getText());
+        }
+
 
 
     }

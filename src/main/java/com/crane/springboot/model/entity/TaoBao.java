@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @TableName(value = "taobao")
 @Data
@@ -21,5 +22,9 @@ public class TaoBao implements Serializable {
     private BigDecimal price;
 
     private String url;
+
+    private Date createTime;
+
+    private Date updateTime;
 
 }

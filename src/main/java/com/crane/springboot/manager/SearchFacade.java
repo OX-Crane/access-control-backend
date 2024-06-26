@@ -67,6 +67,9 @@ public class SearchFacade {
         if (emoExceed) {
             return new SearchVo();
         }
+        searchVo.setEmo(emo);
+        searchVo.setKeyEmo(keyEmo);
+        searchVo.setPicEmo(picEmo);
         return searchVo;
 
 

@@ -38,6 +38,7 @@ public class SearchController {
         if (searchVo.getDataSourceList() == null) {
             return ResultUtils.error(HEALTHY_ERROR.getCode(), HEALTHY_ERROR.getMessage());
         }
+        log.info(String.format("emo:%s \t ketEmo:%s \t picEmo:&s",searchVo.getEmo(),searchVo.getKeyEmo(), searchVo.getPicEmo()));
         return ResultUtils.success(searchVo);
 
     }
