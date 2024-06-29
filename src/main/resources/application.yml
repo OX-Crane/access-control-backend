@@ -50,6 +50,15 @@ server:
     session:
       cookie:
         max-age: 2592000
+# 开启https协议
+#  ssl:
+#    protocol: TLS
+#    key-store: "classpath:server.keystore"
+#    key-alias: tomcat
+#    enabled: true
+#    key-store-password: 123456
+#    key-store-type: JKS
+
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
