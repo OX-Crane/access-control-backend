@@ -6,15 +6,22 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.crane.springboot.model.entity.BiliBili;
+import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class BiliBiliDataSource implements DataSource{
+@Slf4j
+public class BiliBiliDataSource implements DataSource {
 
     @Value("${bilibili.address}")
     String url;
@@ -25,39 +32,34 @@ public class BiliBiliDataSource implements DataSource{
     @Override
     public Page doSearch(String searchText, long pageNum, long pageSize) {
 
-        HashMap<String, String > header = new HashMap<>();
 
-        header.put("Cookie", cookie);
-        String body = HttpRequest.get(url).addHeaders(header).execute().body();
-
-        Map<String, JSONObject> bean = JSONUtil.toBean(body, Map.class);
-
-        JSONObject data = bean.get("data");
-
-        ArrayList<JSONObject> result = data.get("result", ArrayList.class);
-
-        JSONObject entries = result.get(11);
-
-        JSONArray jsonArray = entries.get("data", JSONArray.class);
+        String url = "https://search.bilibili.com/all?keyword=" + searchText;
+        HashMap<String, String> header = new HashMap<>();
+        Document document = null;
+        try {
+            document = Jsoup.connect(url).get();
+        } catch (IOException e) {
+            log.error("连接bilibili失败");
+            throw new RuntimeException(e);
+        }
+        Elements elements = document.select(".video-list .bili-video-card__wrap");
 
         ArrayList<BiliBili> biliBiliArrayList = new ArrayList<>();
+        int i = 0;
+        for (Element e : elements) {
+            if (i >= pageSize) break;
+            Elements a = e.getElementsByTag("a");
+            String murl = a.get(0).attr("href");
+            Element element = a.select(".v-img").get(0);
+            String image = "https:" + element.getElementsByTag("source").get(1).attr("srcset");
+            String title = element.getElementsByTag("img").attr("alt");
+            String author = e.select(".bili-video-card__info--author").get(0).text();
+            String date = e.select(".bili-video-card__info--date").get(0).text().substring(2);
 
-        for (int i = 0; i < 42; i++) {
-            JSONObject jsonObject = jsonArray.get(i, JSONObject.class);
-            String title = jsonObject.get("title", String.class);
-            String author = jsonObject.get("author", String.class);
-            String typeName = jsonObject.get("typename", String.class);
-            String aid = jsonObject.get("aid", String.class);
-            String bvid = jsonObject.get("bvid", String.class);
-            String description = jsonObject.get("description", String.class);
-            String pic = jsonObject.get("pic", String.class);
-            String tag = jsonObject.get("tag", String.class);
-            String[] tags= tag.split(",");
-
-            biliBiliArrayList.add(new BiliBili(title,author,typeName, aid, bvid, description, pic, tags));
+            biliBiliArrayList.add(new BiliBili(title, author, murl, image, date));
+            i++;
         }
-
-        pageSize = 42;
+        pageSize = 10;
         Page<BiliBili> biliBiliPage = new Page<>(pageNum, pageSize);
         biliBiliPage.setRecords(biliBiliArrayList);
 

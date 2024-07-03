@@ -20,11 +20,6 @@ public class PostVO implements Serializable {
     private final static Gson GSON = new Gson();
 
     /**
-     * id
-     */
-    private Long id;
-
-    /**
      * 标题
      */
     private String title;
@@ -33,21 +28,6 @@ public class PostVO implements Serializable {
      * 内容
      */
     private String content;
-
-    /**
-     * 点赞数
-     */
-    private Integer thumbNum;
-
-    /**
-     * 收藏数
-     */
-    private Integer favourNum;
-
-    /**
-     * 创建用户 id
-     */
-    private Long userId;
 
     /**
      * 创建时间
@@ -63,21 +43,6 @@ public class PostVO implements Serializable {
      * 标签列表
      */
     private List<String> tagList;
-
-    /**
-     * 创建人信息
-     */
-    private UserVO user;
-
-    /**
-     * 是否已点赞
-     */
-    private Boolean hasThumb;
-
-    /**
-     * 是否已收藏
-     */
-    private Boolean hasFavour;
 
     /**
      * 包装类转对象

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -16,17 +17,10 @@ public class BiliBili {
 
     private String author;
 
-    private String typeName;
-
-    private String aid;
-
-    private String bvid;
-
-    private String description;
+    private String url;
 
 //    封面地址
     private String pic;
 
-    private String[] tags;
-
+    private String date;
 }

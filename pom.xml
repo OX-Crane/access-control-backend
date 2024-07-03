@@ -10,9 +10,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.crane</groupId>
-    <artifactId>niuso-service</artifactId>
+    <artifactId>access-control-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>niuso-service</name>
+    <name>access-control-backend</name>
     <properties>
         <java.version>1.8</java.version>
     </properties>

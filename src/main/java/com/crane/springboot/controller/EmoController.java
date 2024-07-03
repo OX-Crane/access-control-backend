@@ -4,12 +4,14 @@ import com.crane.springboot.common.CacheUtils;
 import com.crane.springboot.common.Yolo;
 import com.crane.springboot.model.dto.search.SearchRequest;
 import com.crane.springboot.model.entity.*;
+import com.crane.springboot.model.vo.PostVO;
 import com.crane.springboot.model.vo.SearchVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -35,9 +37,6 @@ public class EmoController {
 
     private static ArrayList<EmoChange> emoChanges = new ArrayList<>();
 
-//    图片计数器
-    private int counter;
-
 
     /**
      * 根据查询后的结果(图片 加 文字)进行分析情感值
@@ -53,9 +52,7 @@ public class EmoController {
         for (Object dataSource : dataSourceList) {
             if (dataSource instanceof BiliBili) {
                 String title = ((BiliBili) dataSource).getTitle();
-                String description = ((BiliBili) dataSource).getDescription();
                 results.add(title);
-                results.add(description);
                 String pic = ((BiliBili) dataSource).getPic();
                 picList.add(pic);
             }
@@ -76,6 +73,17 @@ public class EmoController {
                 results.add(product);
                 String url = ((TaoBao) dataSource).getUrl();
                 picList.add(url);
+            }
+            if (dataSource instanceof PostVO) {
+                String title = ((PostVO) dataSource).getTitle();
+                String content = ((PostVO) dataSource).getContent();
+                String tagList = ((PostVO) dataSource).getTagList().toString();
+                String createTime = ((PostVO) dataSource).getCreateTime().toString();
+                String updateTime = ((PostVO) dataSource).getUpdateTime().toString();
+                results.add(content);
+                results.add(tagList);
+                results.add(createTime);
+                results.add(updateTime);
             }
         }
 
@@ -101,11 +109,11 @@ public class EmoController {
 
 //        判断文字内容
         for (String result : results) {
-            if (CacheUtils.neg.contains(result)) {
+            if (CacheUtils.neg.contains(result) || result.contains("war")) {
                 emo += emoStep;
-            } else if (CacheUtils.act.contains(result)) {
+            } else if (CacheUtils.act.contains(result) || result.contains("able")) {
                 emo -= emoStep;
-            } else if (CacheUtils.word.contains(result)) {
+            } else if (CacheUtils.word.contains(result) || result.contains("gun")|| result.contains("knife")) {
                 keyEmo += keyEmoStep;
             }
         }
@@ -150,8 +158,6 @@ public class EmoController {
 
         return searchRequest;
     }
-
-
 
 
 /**

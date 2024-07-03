@@ -104,7 +104,7 @@ emo:
     step: 5
   picEmo:
     value: 20
-    step: 20
+    step: 2
   emo:
     value: 30
     step: 2
