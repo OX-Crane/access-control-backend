@@ -130,6 +130,7 @@ public class EmoController {
 //          判断图片内容
 //        if ((searchRequest.getType().equals("bilibili") || searchRequest.getType().equals("picture"))) {
 
+//        模拟图片下载
         if ((searchRequest.getType().equals("bilibili") || searchRequest.getType().equals("picture")) && textThenPic(searchRequest)) {
             if (searchRequest.getSearchText().equals("gun")) {
                 String path = "E:\\yoloTest\\gun";
@@ -138,8 +139,6 @@ public class EmoController {
                 String path = "E:\\yoloTest\\knife";
                 yolo = Yolo.useYolo(path);
             }
-
-
         }
 
         Long num = 0l;
@@ -186,8 +185,9 @@ public boolean textThenPic(SearchRequest searchRequest) {
     if ((type.equals("picture") || type.equals("bilibili")) && (CacheUtils.word.contains(searchText) || CacheUtils.neg.contains(searchText))) {
         int taobao = emoChanges.lastIndexOf(new EmoChange("taobao", 2));
         int bing = emoChanges.lastIndexOf(new EmoChange("bing", 2));
+        int post = emoChanges.lastIndexOf(new EmoChange("post", 2));
         int current = emoChanges.size() - 1;
-        if ((current - bing < 4 && bing >= 0)) {
+        if ((current - bing < 4 && bing >= 0) || (current - post < 4 && post >= 0)) {
             return true;
         }
         if (type.equals("taobao") && current -bing < 4) {

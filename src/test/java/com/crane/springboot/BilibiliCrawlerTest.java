@@ -7,14 +7,18 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.crane.springboot.model.entity.BiliBili;
 import com.crane.springboot.model.entity.Post;
+import org.apache.http.client.methods.HttpHead;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -25,6 +29,9 @@ import java.util.Map;
 @SpringBootTest
 public class BilibiliCrawlerTest {
 
+    @Value("${bilibili.CookieForSearchAll}")
+    String cookie;
+
     @Test
     void testBiliBili() throws IOException {
 //        1.获取数据
@@ -33,7 +40,9 @@ public class BilibiliCrawlerTest {
         String searchText = "书";
         String url = "https://search.bilibili.com/all?keyword=" + searchText;
         HashMap<String, String > header = new HashMap<>();
-        Document document = Jsoup.connect(url).get();
+        Connection connect = Jsoup.connect(url);
+        connect.header("Cookie", cookie);
+        Document document = connect.get();
         Elements elements = document.select(".video-list .bili-video-card__wrap");
         int i = 0;
         for(Element e : elements) {

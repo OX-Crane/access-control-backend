@@ -7,6 +7,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.crane.springboot.model.entity.BiliBili;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,6 +30,9 @@ public class BiliBiliDataSource implements DataSource {
     @Value(("${bilibili.Cookie}"))
     String cookie;
 
+    @Value("${bilibili.CookieForSearchAll}")
+    String cookieForAll;
+
     @Override
     public Page doSearch(String searchText, long pageNum, long pageSize) {
 
@@ -37,7 +41,9 @@ public class BiliBiliDataSource implements DataSource {
         HashMap<String, String> header = new HashMap<>();
         Document document = null;
         try {
-            document = Jsoup.connect(url).get();
+            Connection connect = Jsoup.connect(url);
+            connect.header("Cookie", cookieForAll);
+            document = connect.get();
         } catch (IOException e) {
             log.error("连接bilibili失败");
             throw new RuntimeException(e);
