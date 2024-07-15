@@ -109,11 +109,11 @@ public class EmoController {
 
 //        判断文字内容
         for (String result : results) {
-            if (CacheUtils.neg.contains(result) || result.contains("war")) {
+            if (CacheUtils.neg.contains(result) || result.toLowerCase().contains("war")) {
                 emo += emoStep;
-            } else if (CacheUtils.act.contains(result) || result.contains("able")) {
+            } else if ((CacheUtils.act.contains(result) || result.toLowerCase().contains("able")) && emo > 1) {
                 emo -= emoStep;
-            } else if (CacheUtils.word.contains(result) || result.contains("gun")|| result.contains("knife")) {
+            } else if (CacheUtils.word.contains(result) || result.toLowerCase().contains("gun") || result.toLowerCase().contains("knife")) {
                 keyEmo += keyEmoStep;
             }
         }
@@ -159,81 +159,101 @@ public class EmoController {
     }
 
 
-/**
- * 情感值不在正常范围内的判断
- *
- * @return
- */
-public boolean emoExceed(int keyEmo, int picEmo, int emo) {
-    if (keyEmo < keyEmoValue && picEmo < picEmoValue && emo < emoValue) {
+    /**
+     * 情感值不在正常范围内的判断
+     *
+     * @return
+     */
+    public boolean emoExceed(int keyEmo, int picEmo, int emo) {
+        if (keyEmo < keyEmoValue && picEmo < picEmoValue && emo < emoValue) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 记录在发送返回结果前的情感
+     * 若用户触发了一次keyEmo，然后触发了picEmo，则认为用户是危险的
+     * <p>
+     * 策略：认为用户搜过危险词然后想要获得更多的信息或者购买危险品则认为是危险的，且在搜索间隔小于4的情况下
+     *
+     * @return true 为有问题
+     */
+    public boolean textThenPic(SearchRequest searchRequest) {
+        String name = searchRequest.getName();
+        String city = searchRequest.getCity();
+        String type = searchRequest.getType();
+
+        long pageSize = searchRequest.getPageSize();
+        long pageNum = searchRequest.getPageNum();
+        String searchText = searchRequest.getSearchText();
+
+        if ((type.equals("picture") || type.equals("bilibili")) && (CacheUtils.word.contains(searchText) || CacheUtils.neg.contains(searchText))) {
+            int taobao = emoChanges.lastIndexOf(new EmoChange(name, city, "taobao", searchText, pageNum, pageSize, 2));
+            int bing = emoChanges.lastIndexOf(new EmoChange(name, city, "bing", searchText, pageNum, pageSize, 2));
+            int post = emoChanges.lastIndexOf(new EmoChange(name, city, "post", searchText, pageNum, pageSize, 2));
+            int current = emoChanges.size() - 1;
+            if ((current - bing < 4 && bing >= 0) || (current - post < 4 && post >= 0)) {
+                return true;
+            }
+            if (type.equals("taobao") && current - bing < 4) {
+                return true;
+            }
+        }
         return false;
     }
-    return true;
-}
 
-/**
- * 记录在发送返回结果前的情感
- * 若用户触发了一次keyEmo，然后触发了picEmo，则认为用户是危险的
- *
- * 策略：认为用户搜过危险词然后想要获得更多的信息或者购买危险品则认为是危险的，且在搜索间隔小于4的情况下
- *
- * @return true 为有问题
- */
-public boolean textThenPic(SearchRequest searchRequest) {
-    String type = searchRequest.getType();
-    String searchText = searchRequest.getSearchText();
-    if ((type.equals("picture") || type.equals("bilibili")) && (CacheUtils.word.contains(searchText) || CacheUtils.neg.contains(searchText))) {
-        int taobao = emoChanges.lastIndexOf(new EmoChange("taobao", 2));
-        int bing = emoChanges.lastIndexOf(new EmoChange("bing", 2));
-        int post = emoChanges.lastIndexOf(new EmoChange("post", 2));
-        int current = emoChanges.size() - 1;
-        if ((current - bing < 4 && bing >= 0) || (current - post < 4 && post >= 0)) {
-            return true;
-        }
-        if (type.equals("taobao") && current -bing < 4) {
-            return true;
-        }
-    }
-    return false;
-}
+    /**
+     * 根据关键词进行emo值判断同时记录用户的行为
+     *
+     * @param searchRequest
+     * @return
+     */
+    public SearchRequest emotionBySearchText(SearchRequest searchRequest) {
 
-/**
- * 根据关键词进行emo值判断同时记录用户的行为
- *
- * @param searchRequest
- * @return
- */
-public SearchRequest emotionBySearchText(SearchRequest searchRequest) {
-    int keyEmo = searchRequest.getKeyEmo();
-    int emo = searchRequest.getEmo();
-    String searchText = searchRequest.getSearchText();
+        String searchText = searchRequest.getSearchText();
 
-    if (StringUtils.isNoneBlank(searchText)) {
+        if (StringUtils.isNoneBlank(searchText)) {
 //            根据字典判断搜索词是不是负词语
-        boolean netContain = CacheUtils.neg.contains(searchText);
+            boolean netContain = CacheUtils.neg.contains(searchText);
 //            根据字典判断搜索词是不是正面词
-        boolean actContain = CacheUtils.act.contains(searchText);
+            boolean actContain = CacheUtils.act.contains(searchText);
 //            根据字典判断搜索词是不是重点词语
-        boolean wordContain = CacheUtils.word.contains(searchText);
+            boolean wordContain = CacheUtils.word.contains(searchText);
 //            根据上述条件,对emo值进行更改
-        if (netContain) {
-            emo += emoStep;
-            emoChanges.add(new EmoChange(searchRequest.getType(), 1));
-        }
-        if (actContain) {
-            emo -= emoStep;
-            emoChanges.add(new EmoChange(searchRequest.getType(), -1));
-        }
-        if (wordContain) {
-            keyEmo += keyEmoStep;
-            emoChanges.add(new EmoChange(searchRequest.getType(), 2));
-        }
-    }
-    searchRequest.setKeyEmo(keyEmo);
-    searchRequest.setEmo(emo);
+            if (netContain || actContain || wordContain) {
+                String name = searchRequest.getName();
+                String city = searchRequest.getCity();
+                String type = searchRequest.getType();
+                int keyEmo = searchRequest.getKeyEmo();
+                int emo = searchRequest.getEmo();
+                int picEmo = searchRequest.getPicEmo();
 
-    return searchRequest;
-}
+                long pageSize = searchRequest.getPageSize();
+                long pageNum = searchRequest.getPageNum();
+
+                if (netContain) {
+                    emo += emoStep;
+                    emoChanges.add(new EmoChange(name, city, type, searchText, pageNum, pageSize, 1));
+                }
+                if (actContain) {
+                    emo -= emoStep;
+                    emoChanges.add(new EmoChange(name, city, type, searchText, pageNum, pageSize, -1));
+                }
+                if (wordContain) {
+                    keyEmo += keyEmoStep;
+                    emoChanges.add(new EmoChange(name, city, type, searchText, pageNum, pageSize, 2));
+                }
+
+                searchRequest.setKeyEmo(keyEmo);
+                searchRequest.setEmo(emo);
+            }
+
+        }
+
+
+        return searchRequest;
+    }
 
 
 }

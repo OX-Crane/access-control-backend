@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import springfox.documentation.schema.property.ObjectMapperBeanPropertyNamingStrategy;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.Map;
 @Slf4j
 public class BiliBiliDataSource implements DataSource {
 
+    private final ObjectMapperBeanPropertyNamingStrategy objectMapperBeanPropertyNamingStrategy;
     @Value("${bilibili.address}")
     String url;
 
@@ -32,6 +34,10 @@ public class BiliBiliDataSource implements DataSource {
 
     @Value("${bilibili.CookieForSearchAll}")
     String cookieForAll;
+
+    public BiliBiliDataSource(ObjectMapperBeanPropertyNamingStrategy objectMapperBeanPropertyNamingStrategy) {
+        this.objectMapperBeanPropertyNamingStrategy = objectMapperBeanPropertyNamingStrategy;
+    }
 
     @Override
     public Page doSearch(String searchText, long pageNum, long pageSize) {
@@ -45,6 +51,7 @@ public class BiliBiliDataSource implements DataSource {
             connect.header("Cookie", cookieForAll);
             document = connect.get();
         } catch (IOException e) {
+//            连接次数过多模拟
             log.error("连接bilibili失败");
             throw new RuntimeException(e);
         }

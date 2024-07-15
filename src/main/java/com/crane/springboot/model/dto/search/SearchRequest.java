@@ -21,7 +21,18 @@ public class SearchRequest extends PageRequest implements Serializable {
      * 搜索词
      */
     private String searchText;
+    /**
+     * 姓名
+     */
+    private String name;
+    /**
+     * 城市
+     */
+    private String city;
 
+    private long pageSize;
+
+    private long pageNum;
     /**
      * 关键情感值
      */
